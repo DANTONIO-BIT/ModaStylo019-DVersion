@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/* ─── Stylo019 Design Tokens ─── */
+@theme {
+  /* Colors — cool blue palette */
+  --color-base:        #ECF9FF;  /* main background, palest sky */
+  --color-surface:     #A2E2FF;  /* borders, dividers, skeletons — NOT for text on light bg */
+  --color-accent:      #1CB6FE;  /* CTAs, interactive lines, accents on dark bg */
+  --color-accent-ink:  #0E73A6;  /* accent variant readable as text on light bg */
+  --color-ink:         #0A2540;  /* primary text, navy for contrast */
+  --color-muted:       #45637F;  /* secondary text on light bg — AA on base */
+  --color-muted-soft:  #7C9AB4;  /* purely decorative micro-labels, no critical info */
+  --color-paper:       #FFFFFF;  /* pure white surfaces, inputs */
+
+  /* Typography */
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+
+  /* Spacing scale extreme */
+  --spacing-px-2xs: 0.125rem;
+  --spacing-3xl: 8rem;
+  --spacing-4xl: 12rem;
+  --spacing-5xl: 18rem;
+}
+
+/* ─── Base ─── */
+/* Wrapped in @layer base so Tailwind utilities (which live in @layer utilities)
+   can override margin/padding resets. Otherwise unlayered rules beat layers. */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-base);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+}
+
+/* ─── Typography extrema ─── */
+.display-xl {
+  font-family: var(--font-serif);
+  font-size: clamp(4rem, 12vw, 14rem);
+  font-weight: 600;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+}
+
+.display-lg {
+  font-family: var(--font-serif);
+  font-size: clamp(2.5rem, 7vw, 8rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.label-xs {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background-color: var(--color-accent);
+  color: var(--color-paper);
+}
+
+/* ─── Utilities ─── */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─── Custom cursor ─── */
+@media (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* ─── Skeleton loading shine ─── */
+@keyframes skeleton-shine {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.skeleton-shine {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    #c9ecff 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shine 1.4s ease-in-out infinite;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 3px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-accent);
+}

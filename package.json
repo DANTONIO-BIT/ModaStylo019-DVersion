@@ -1,0 +1,27 @@
+{
+  "name": "modamariajose",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "@supabase/supabase-js": "^2.103.0",
+    "gsap": "^3.14.2",
+    "react": "18",
+    "react-dom": "18",
+    "react-router-dom": "7",
+"zustand": "^5.0.12"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.4.27",
+    "tailwindcss": "4",
+    "vite": "^8.0.8"
+  }
+}
