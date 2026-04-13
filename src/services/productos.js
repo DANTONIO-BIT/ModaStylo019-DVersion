@@ -46,7 +46,7 @@ export const fetchProductos = async ({
     .select('*', { count: 'exact' })
 
   // Category
-  if (categoria) query = query.eq('categoria', categoria)
+  if (categoria) query = query.eq('categoria', categoria.toLowerCase())
 
   // Price range
   if (precioMin !== null) query = query.gte('precio', precioMin)
@@ -162,7 +162,7 @@ export const fetchProductosAdmin = async ({
     .select('*')
     .order('created_at', { ascending: false })
 
-  if (categoria) query = query.eq('categoria', categoria)
+  if (categoria) query = query.eq('categoria', categoria.toLowerCase())
 
   if (busqueda && busqueda.trim()) {
     const q = busqueda.trim()

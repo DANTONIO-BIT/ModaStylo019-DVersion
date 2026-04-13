@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth'
 const navItems = [
   { to: '/admin', label: 'Productos', end: true },
   { to: '/admin/productos/nuevo', label: 'Nuevo producto', end: false },
+  { to: '/admin/hero', label: 'Hero', end: true },
 ]
 
 export const AdminLayout = () => {

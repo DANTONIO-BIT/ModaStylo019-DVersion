@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { getPrecioEfectivo } from '@/lib/precio'
 
 export const useCartStore = create(
   persist(
@@ -21,7 +22,8 @@ export const useCartStore = create(
             ),
           })
         } else {
-          set({ items: [...items, { ...product, talla, cantidad: 1 }] })
+          const precioUnitario = getPrecioEfectivo(product, talla)
+          set({ items: [...items, { ...product, talla, precioUnitario, cantidad: 1 }] })
         }
       },
 
@@ -44,7 +46,10 @@ export const useCartStore = create(
 
       // Computed
       total: () =>
-        get().items.reduce((sum, i) => sum + i.precio * i.cantidad, 0),
+        get().items.reduce((sum, i) => {
+          const price = i.precioUnitario ?? getPrecioEfectivo(i, i.talla)
+          return sum + price * i.cantidad
+        }, 0),
 
       totalItems: () =>
         get().items.reduce((sum, i) => sum + i.cantidad, 0),
@@ -54,9 +59,10 @@ export const useCartStore = create(
         const items = get().items
         if (items.length === 0) return ''
 
-        const lines = items.map(
-          (i) => `• ${i.nombre} — Talla: ${i.talla} x${i.cantidad} (€${(i.precio * i.cantidad).toFixed(2)})`
-        )
+        const lines = items.map((i) => {
+          const price = i.precioUnitario ?? getPrecioEfectivo(i, i.talla)
+          return `• ${i.nombre} — Talla: ${i.talla} x${i.cantidad} (€${(price * i.cantidad).toFixed(2)})`
+        })
 
         const total = get().total()
         const msg = [

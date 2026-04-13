@@ -14,6 +14,7 @@ const CATEGORIAS = [
   'faldas',
   'pantalones',
   'blusas',
+  'curvy',
 ]
 
 const TALLAS = ['XS', 'S', 'M', 'L', 'XL']
@@ -22,8 +23,11 @@ const emptyForm = () => ({
   nombre: '',
   descripcion: '',
   precio: '',
+  precio_oferta: '',
   categoria: 'vestidos',
   tallas: { XS: 0, S: 0, M: 0, L: 0, XL: 0 },
+  precios_talla: {},
+  usarPreciosTalla: false,
   imagenes: [],
   destacado: false,
   mas_vendido: false,
@@ -61,10 +65,13 @@ const ProductoForm = () => {
         setLoading(false)
         return
       }
+      const pt = data.precios_talla ?? {}
+      const hasPT = Object.keys(pt).length > 0
       setForm({
         nombre: data.nombre ?? '',
         descripcion: data.descripcion ?? '',
         precio: String(data.precio ?? ''),
+        precio_oferta: data.precio_oferta ? String(data.precio_oferta) : '',
         categoria: data.categoria ?? 'vestidos',
         tallas: {
           XS: Number(data.tallas?.XS) || 0,
@@ -73,6 +80,10 @@ const ProductoForm = () => {
           L: Number(data.tallas?.L) || 0,
           XL: Number(data.tallas?.XL) || 0,
         },
+        precios_talla: Object.fromEntries(
+          TALLAS.map((t) => [t, pt[t] != null ? String(pt[t]) : ''])
+        ),
+        usarPreciosTalla: hasPT,
         imagenes: Array.isArray(data.imagenes) ? data.imagenes : [],
         destacado: !!data.destacado,
         mas_vendido: !!data.mas_vendido,
@@ -104,6 +115,13 @@ const ProductoForm = () => {
     }))
   }
 
+  const updatePrecioTalla = (talla, value) => {
+    setForm((prev) => ({
+      ...prev,
+      precios_talla: { ...prev.precios_talla, [talla]: value },
+    }))
+  }
+
   const validate = () => {
     const errors = {}
     if (!form.nombre.trim()) errors.nombre = 'Requerido'
@@ -122,12 +140,26 @@ const ProductoForm = () => {
     setError(null)
     setSubmitting(true)
 
+    const precioOferta = form.precio_oferta ? Number(form.precio_oferta) : null
+
+    // Build precios_talla: only include sizes with a valid number, null if toggle is off or empty
+    let preciosTalla = null
+    if (form.usarPreciosTalla) {
+      const entries = TALLAS
+        .filter((t) => form.precios_talla[t] !== '' && form.precios_talla[t] != null)
+        .map((t) => [t, Number(form.precios_talla[t])])
+        .filter(([, v]) => Number.isFinite(v) && v > 0)
+      if (entries.length > 0) preciosTalla = Object.fromEntries(entries)
+    }
+
     const payload = {
       nombre: form.nombre.trim(),
       descripcion: form.descripcion.trim() || null,
       precio: Number(form.precio),
+      precio_oferta: precioOferta,
       categoria: form.categoria,
       tallas: form.tallas,
+      precios_talla: preciosTalla,
       imagenes: form.imagenes,
       destacado: form.destacado,
       mas_vendido: form.mas_vendido,
@@ -269,6 +301,25 @@ const ProductoForm = () => {
               </Field>
 
               <Field
+                label="Precio oferta (€)"
+              >
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={form.precio_oferta}
+                  onChange={(e) => updateField('precio_oferta', e.target.value)}
+                  placeholder="Dejar vacío si no hay oferta"
+                  className="w-full bg-[var(--color-paper)] font-sans text-[var(--color-ink)] outline-none focus:border-[var(--color-accent)]"
+                  style={{
+                    border: '1px solid var(--color-surface)',
+                    padding: '0.85rem 1rem',
+                    fontSize: '0.95rem',
+                  }}
+                />
+              </Field>
+
+              <Field
                 label="Categoría"
                 required
                 error={fieldErrors.categoria}
@@ -325,6 +376,51 @@ const ProductoForm = () => {
                 />
               </Field>
             ))}
+          </div>
+        </Section>
+
+        {/* Per-size pricing (optional) */}
+        <Section
+          title="Precio por talla"
+          hint="Activa esta opción solo si alguna talla tiene un precio diferente al precio base."
+        >
+          <div className="flex flex-col" style={{ gap: '1.25rem' }}>
+            <FlagRow
+              label="Usar precio diferente por talla"
+              hint="Las tallas sin precio usarán el precio base del producto"
+              checked={form.usarPreciosTalla}
+              onChange={(v) => updateField('usarPreciosTalla', v)}
+            />
+
+            {form.usarPreciosTalla && (
+              <div
+                className="grid"
+                style={{
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(7rem, 1fr))',
+                  gap: '1rem',
+                }}
+              >
+                {TALLAS.map((talla) => (
+                  <Field key={talla} label={`${talla} (€)`}>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={form.precios_talla[talla] ?? ''}
+                      onChange={(e) => updatePrecioTalla(talla, e.target.value)}
+                      placeholder={form.precio || '—'}
+                      className="w-full bg-[var(--color-paper)] font-serif text-[var(--color-ink)] text-center outline-none focus:border-[var(--color-accent)]"
+                      style={{
+                        border: '1px solid var(--color-surface)',
+                        padding: '1rem 0.75rem',
+                        fontSize: '1.4rem',
+                        fontWeight: 300,
+                      }}
+                    />
+                  </Field>
+                ))}
+              </div>
+            )}
           </div>
         </Section>
 

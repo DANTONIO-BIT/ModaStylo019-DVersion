@@ -15,6 +15,7 @@ const CATEGORIAS = [
   { value: 'faldas', label: 'Faldas' },
   { value: 'pantalones', label: 'Pantalones' },
   { value: 'blusas', label: 'Blusas' },
+  { value: 'curvy', label: 'Curvy' },
 ]
 
 const TALLAS = ['XS', 'S', 'M', 'L', 'XL']
@@ -343,12 +344,26 @@ const ProductosList = () => {
               </span>
 
               {/* Price */}
-              <span
-                className="font-serif text-[var(--color-ink)]"
-                style={{ fontSize: '1rem', fontWeight: 400 }}
-              >
-                {formatPrecio(p.precio)}
-              </span>
+              <div className="flex flex-col">
+                {p.precio_oferta != null && p.precio_oferta < p.precio && (
+                  <span
+                    className="font-serif line-through"
+                    style={{ fontSize: '0.78rem', fontWeight: 400, color: '#dc2626' }}
+                  >
+                    {formatPrecio(p.precio)}
+                  </span>
+                )}
+                <span
+                  className="font-serif text-[var(--color-ink)]"
+                  style={{ fontSize: '1rem', fontWeight: 400 }}
+                >
+                  {formatPrecio(
+                    p.precio_oferta != null && p.precio_oferta < p.precio
+                      ? p.precio_oferta
+                      : p.precio
+                  )}
+                </span>
+              </div>
 
               {/* Stock total */}
               <span

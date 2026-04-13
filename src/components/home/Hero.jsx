@@ -1,9 +1,10 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { HERO_PLACEHOLDER } from '@/lib/placeholderImages'
 import { useMagnetic } from '@/hooks/useMagnetic'
+import { fetchSetting } from '@/services/settings'
 
 gsap.registerPlugin(useGSAP)
 
@@ -11,6 +12,14 @@ gsap.registerPlugin(useGSAP)
 const TITLE_WORDS = ['Moda', 'para', 'ti.']
 
 export const Hero = () => {
+  const [heroSrc, setHeroSrc] = useState(HERO_PLACEHOLDER)
+
+  useEffect(() => {
+    fetchSetting('hero_image').then(({ data }) => {
+      if (data?.url) setHeroSrc(data.url)
+    })
+  }, [])
+
   const rootRef = useRef(null)
   const imageRef = useRef(null)
   const labelRef = useRef(null)
@@ -136,7 +145,7 @@ export const Hero = () => {
           >
             <img
               ref={imageRef}
-              src={HERO_PLACEHOLDER}
+              src={heroSrc}
               alt="ModaMariaJose — Atelier Sevilla"
               className="absolute inset-0 w-full h-full object-cover will-change-transform"
               style={{ transformOrigin: 'center center' }}

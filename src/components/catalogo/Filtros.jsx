@@ -4,7 +4,7 @@ import gsap from 'gsap'
 
 gsap.registerPlugin(useGSAP)
 
-const CATEGORIAS = ['Vestidos', 'Blazers', 'Abrigos', 'Faldas', 'Pantalones', 'Blusas']
+const CATEGORIAS = ['Vestidos', 'Blazers', 'Abrigos', 'Faldas', 'Pantalones', 'Blusas', 'Curvy']
 const TALLAS = ['XS', 'S', 'M', 'L', 'XL']
 
 // Editorial sticky sidebar — no card, no shadow, integrated into the cream background.
@@ -281,26 +281,48 @@ export const Filtros = ({ filtros, onChange, onLimpiar, totalResultados = 0 }) =
         </div>
       </section>
 
-      {/* Limpiar filtros */}
-      {hayFiltrosActivos && (
+      {/* Action buttons */}
+      <div className="flex items-center gap-4" style={{ marginTop: '-0.5rem' }}>
         <button
           type="button"
-          onClick={onLimpiar}
-          className="label-xs self-start transition-colors duration-300"
+          onClick={commitPrecio}
+          className="label-xs border border-[var(--color-ink)] px-5 py-2.5 transition-colors duration-300"
           style={{
-            color: 'var(--color-accent-ink)',
+            color: 'var(--color-ink)',
             letterSpacing: '0.18em',
           }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.color = 'var(--color-ink)')
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.color = 'var(--color-accent-ink)')
-          }
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'var(--color-ink)'
+            e.currentTarget.style.color = 'var(--color-paper)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'transparent'
+            e.currentTarget.style.color = 'var(--color-ink)'
+          }}
         >
-          &mdash; Limpiar filtros
+          Buscar
         </button>
-      )}
+
+        {hayFiltrosActivos && (
+          <button
+            type="button"
+            onClick={onLimpiar}
+            className="label-xs transition-colors duration-300"
+            style={{
+              color: 'var(--color-accent-ink)',
+              letterSpacing: '0.18em',
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.color = 'var(--color-ink)')
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.color = 'var(--color-accent-ink)')
+            }
+          >
+            Limpiar
+          </button>
+        )}
+      </div>
     </aside>
   )
 }

@@ -2,18 +2,12 @@ import { useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
+import { formatPrice } from '@/lib/precio'
 
 gsap.registerPlugin(useGSAP)
 
 // Fixed size order for consistent display across cards
 const TALLA_ORDER = ['XS', 'S', 'M', 'L', 'XL']
-
-// Format price with euro symbol as superscript and integer/decimal split
-const formatPrice = (precio) => {
-  const safe = Number(precio ?? 0)
-  const [int, dec] = safe.toFixed(2).split('.')
-  return { int, dec }
-}
 
 export const ProductCard = ({ producto, index = 0 }) => {
   const navigate = useNavigate()
@@ -35,7 +29,10 @@ export const ProductCard = ({ producto, index = 0 }) => {
     [index]
   )
 
-  const { int: precioInt, dec: precioDec } = formatPrice(producto?.precio)
+  const hasOferta = producto?.precio_oferta != null && producto.precio_oferta < producto.precio
+  const precioEfectivo = hasOferta ? producto.precio_oferta : producto.precio
+  const { int: precioInt, dec: precioDec } = formatPrice(precioEfectivo)
+  const { int: precioOrigInt, dec: precioOrigDec } = formatPrice(producto?.precio)
   const primeraImagen = producto?.imagenes?.[0] ?? ''
   const categoria = producto?.categoria ?? ''
 
@@ -181,9 +178,20 @@ export const ProductCard = ({ producto, index = 0 }) => {
           {categoria}
         </span>
 
-        {/* Badges — destacado / más vendido */}
-        {(producto?.destacado || producto?.mas_vendido) && (
+        {/* Badges — oferta / destacado / más vendido */}
+        {(producto?.destacado || producto?.mas_vendido || hasOferta) && (
           <div className="absolute bottom-4 left-4 z-10 flex flex-col gap-1">
+            {hasOferta && (
+              <span
+                className="label-xs px-1.5 py-0.5"
+                style={{
+                  color: '#fff',
+                  background: '#dc2626',
+                }}
+              >
+                Oferta
+              </span>
+            )}
             {producto?.mas_vendido && (
               <span
                 className="label-xs px-1.5 py-0.5"
@@ -274,27 +282,49 @@ export const ProductCard = ({ producto, index = 0 }) => {
             {producto?.nombre ?? ''}
           </h3>
 
-          <p
-            className="font-serif flex items-start shrink-0"
-            style={{ color: 'var(--color-ink)', fontWeight: 600 }}
-          >
-            <span
-              style={{
-                fontSize: '0.6rem',
-                lineHeight: 1,
-                marginTop: '0.35rem',
-                marginRight: '0.1rem',
-              }}
+          <div className="flex items-baseline gap-2 shrink-0">
+            {hasOferta && (
+              <p
+                className="font-serif flex items-start line-through"
+                style={{ color: '#dc2626', fontWeight: 400, opacity: 0.85 }}
+              >
+                <span
+                  style={{
+                    fontSize: '0.45rem',
+                    lineHeight: 1,
+                    marginTop: '0.25rem',
+                    marginRight: '0.05rem',
+                  }}
+                >
+                  &euro;
+                </span>
+                <span style={{ fontSize: '0.95rem', lineHeight: 1 }}>
+                  {precioOrigInt}
+                </span>
+              </p>
+            )}
+            <p
+              className="font-serif flex items-start"
+              style={{ color: 'var(--color-ink)', fontWeight: 600 }}
             >
-              &euro;
-            </span>
-            <span style={{ fontSize: '1.4rem', lineHeight: 1 }}>
-              {precioInt}
-              <span style={{ fontSize: '0.75rem', marginLeft: '0.1rem' }}>
-                .{precioDec}
+              <span
+                style={{
+                  fontSize: '0.6rem',
+                  lineHeight: 1,
+                  marginTop: '0.35rem',
+                  marginRight: '0.1rem',
+                }}
+              >
+                &euro;
               </span>
-            </span>
-          </p>
+              <span style={{ fontSize: '1.4rem', lineHeight: 1 }}>
+                {precioInt}
+                <span style={{ fontSize: '0.75rem', marginLeft: '0.1rem' }}>
+                  .{precioDec}
+                </span>
+              </span>
+            </p>
+          </div>
         </div>
 
         {/* Sizes row */}

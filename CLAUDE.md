@@ -19,7 +19,7 @@ Prototipo de referencia: https://web-e-commerce-ma-jo-d4x1.vercel.app/
 - Sin pasarela de pago en v1 (preparar arquitectura para futura integración)
 
 ## Categorías de productos
-Vestidos, Blazers, Abrigos, Faldas, Pantalones, Blusas
+Vestidos, Blazers, Abrigos, Faldas, Pantalones, Blusas, Curvy
 
 ## Tallas
 XS, S, M, L, XL — con posibilidad de precio diferente por talla

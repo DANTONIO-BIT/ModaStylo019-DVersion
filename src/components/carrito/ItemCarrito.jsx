@@ -4,15 +4,9 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useCartStore } from '@/store/useCartStore'
 import { useUIStore } from '@/store/useUIStore'
+import { getPrecioEfectivo, formatPrice } from '@/lib/precio'
 
 gsap.registerPlugin(useGSAP)
-
-// Format price into integer + decimal parts (visual emphasis)
-const formatPrice = (precio) => {
-  const safe = Number(precio ?? 0)
-  const [int, dec] = safe.toFixed(2).split('.')
-  return { int, dec }
-}
 
 // Single line item inside CartDrawer. Shows thumbnail, name, size,
 // subtotal (price × quantity), quantity controls, and remove button.
@@ -60,7 +54,8 @@ export const ItemCarrito = ({ item }) => {
     updateCantidad(item.id, item.talla, item.cantidad + 1)
   }
 
-  const subtotal = Number(item.precio ?? 0) * item.cantidad
+  const price = item.precioUnitario ?? getPrecioEfectivo(item, item.talla)
+  const subtotal = price * item.cantidad
   const { int, dec } = formatPrice(subtotal)
   const thumb = item.imagenes?.[0] ?? null
 

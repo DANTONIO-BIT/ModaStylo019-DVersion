@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
@@ -8,15 +8,9 @@ import { useUIStore } from '@/store/useUIStore'
 import { GaleriaProducto } from '@/components/producto/GaleriaProducto'
 import { SelectorTalla } from '@/components/producto/SelectorTalla'
 import { ProductosRelacionados } from '@/components/producto/ProductosRelacionados'
+import { getPrecioBase, getPrecioEfectivo, formatPrice } from '@/lib/precio'
 
 gsap.registerPlugin(useGSAP)
-
-// Format price into integer + decimal parts (same helper as ProductCard)
-const formatPrice = (precio) => {
-  const safe = Number(precio ?? 0)
-  const [int, dec] = safe.toFixed(2).split('.')
-  return { int, dec }
-}
 
 // Build a pre-filled WhatsApp message URL for a specific product + size
 const buildWhatsAppUrl = (nombre, talla, precio) => {
@@ -170,9 +164,13 @@ const Producto = () => {
 
   if (!producto) return null
 
-  const { int: precioInt, dec: precioDec } = formatPrice(producto.precio)
+  const precioBase = getPrecioBase(producto, tallaSeleccionada)
+  const precioEfectivo = getPrecioEfectivo(producto, tallaSeleccionada)
+  const hasOferta = precioEfectivo < precioBase
+  const { int: precioInt, dec: precioDec } = formatPrice(precioEfectivo)
+  const { int: precioOrigInt, dec: precioOrigDec } = formatPrice(precioBase)
   const whatsappUrl = tallaSeleccionada
-    ? buildWhatsAppUrl(producto.nombre, tallaSeleccionada, producto.precio)
+    ? buildWhatsAppUrl(producto.nombre, tallaSeleccionada, precioEfectivo)
     : null
 
   // ── Full product page ─────────────────────────────────────────────────────
@@ -230,26 +228,52 @@ const Producto = () => {
           </h1>
 
           {/* Price */}
-          <p data-animate className="font-serif flex items-start" style={{ color: 'var(--color-accent-ink)' }}>
-            <span
-              style={{ fontSize: '0.7rem', lineHeight: 1, marginTop: '0.5rem', marginRight: '0.15rem' }}
-            >
-              &euro;
-            </span>
-            <span
-              style={{
-                fontSize: 'clamp(2.2rem, 4vw, 3.2rem)',
-                lineHeight: 1,
-                letterSpacing: '-0.03em',
-                fontWeight: 600,
-              }}
-            >
-              {precioInt}
-              <span style={{ fontSize: '1.1rem', marginLeft: '0.15rem', fontWeight: 400 }}>
-                .{precioDec}
+          <div data-animate className="flex items-baseline gap-3">
+            {hasOferta && (
+              <p
+                className="font-serif flex items-start line-through"
+                style={{ color: '#dc2626', fontWeight: 400, opacity: 0.85 }}
+              >
+                <span
+                  style={{ fontSize: '0.55rem', lineHeight: 1, marginTop: '0.4rem', marginRight: '0.1rem' }}
+                >
+                  &euro;
+                </span>
+                <span
+                  style={{
+                    fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)',
+                    lineHeight: 1,
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  {precioOrigInt}
+                  <span style={{ fontSize: '0.8rem', marginLeft: '0.1rem' }}>
+                    .{precioOrigDec}
+                  </span>
+                </span>
+              </p>
+            )}
+            <p className="font-serif flex items-start" style={{ color: 'var(--color-accent-ink)' }}>
+              <span
+                style={{ fontSize: '0.7rem', lineHeight: 1, marginTop: '0.5rem', marginRight: '0.15rem' }}
+              >
+                &euro;
               </span>
-            </span>
-          </p>
+              <span
+                style={{
+                  fontSize: 'clamp(2.2rem, 4vw, 3.2rem)',
+                  lineHeight: 1,
+                  letterSpacing: '-0.03em',
+                  fontWeight: 600,
+                }}
+              >
+                {precioInt}
+                <span style={{ fontSize: '1.1rem', marginLeft: '0.15rem', fontWeight: 400 }}>
+                  .{precioDec}
+                </span>
+              </span>
+            </p>
+          </div>
 
           {/* Description */}
           {producto.descripcion && (

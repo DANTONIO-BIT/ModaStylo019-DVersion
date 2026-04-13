@@ -17,6 +17,7 @@ const AdminLayout = lazy(() =>
 )
 const ProductosList = lazy(() => import('@/pages/admin/ProductosList'))
 const ProductoForm = lazy(() => import('@/pages/admin/ProductoForm'))
+const HeroSettings = lazy(() => import('@/pages/admin/HeroSettings'))
 
 const RouteFallback = () => (
   <div
@@ -55,6 +56,7 @@ const App = () => (
           <Route index element={<ProductosList />} />
           <Route path="productos/nuevo" element={<ProductoForm />} />
           <Route path="productos/:id" element={<ProductoForm />} />
+          <Route path="hero" element={<HeroSettings />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

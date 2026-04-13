@@ -5,17 +5,11 @@ import { useCartStore } from '@/store/useCartStore'
 import { useUIStore } from '@/store/useUIStore'
 import { ItemCarrito } from '@/components/carrito/ItemCarrito'
 import { CarritoVacio } from '@/components/carrito/CarritoVacio'
+import { formatPrice } from '@/lib/precio'
 
 gsap.registerPlugin(useGSAP)
 
 const WHATSAPP_NUMBER = '34658509332'
-
-// Format price into integer + decimal parts (shared visual rhythm)
-const formatPrice = (precio) => {
-  const safe = Number(precio ?? 0)
-  const [int, dec] = safe.toFixed(2).split('.')
-  return { int, dec }
-}
 
 // Slide-in cart sidebar: backdrop + right panel with items, subtotal,
 // WhatsApp checkout and clear-cart action. Mounted in Layout.jsx.
