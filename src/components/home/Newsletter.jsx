@@ -7,7 +7,10 @@ import { subscribeEmail } from '@/services/subscribers'
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 // Editorial phrase — split into words for stagger
-const PHRASE = ['Tu', 'estilo,', 'tu', 'talla,', 'tu', 'momento.']
+const PHRASE = ['Tu', 'estilo,', 'tu', 'talla,', 'tu.']
+
+// Words that represent the pronoun "tu/Tu" — painted in accent
+const ACCENT_WORDS = new Set(['Tu', 'tu', 'tu.'])
 
 // Basic email shape validation
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -190,15 +193,14 @@ export const Newsletter = () => {
               >
                 <span
                   ref={(el) => (wordsRef.current[i] = el)}
-                  className={`block font-serif ${
-                    word === 'momento.'
-                      ? 'italic font-light text-[var(--color-accent)]'
-                      : 'font-light text-[var(--color-base)]'
-                  }`}
+                  className="block font-serif font-light"
                   style={{
                     fontSize: 'clamp(2.4rem, 6.2vw, 6.2rem)',
                     lineHeight: 0.88,
                     letterSpacing: '-0.03em',
+                    color: ACCENT_WORDS.has(word)
+                      ? '#1CB6FE'
+                      : 'var(--color-base)',
                   }}
                 >
                   {word}

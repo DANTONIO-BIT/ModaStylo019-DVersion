@@ -10,9 +10,9 @@ gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 // Navigation items — asymmetric, not a standard set
 const NAV_ITEMS = [
-  { label: 'Index', to: '/', number: '01' },
-  { label: 'Atelier', to: '/catalogo', number: '02' },
-  { label: 'Contact', to: '/contacto', number: '03' },
+  { label: 'Inicio', to: '/', number: '01' },
+  { label: 'Catalogo', to: '/catalogo', number: '02' },
+  { label: 'Contacto', to: '/contacto', number: '03' },
 ]
 
 export const Header = ({ variant = 'default' }) => {
@@ -159,7 +159,7 @@ export const Header = ({ variant = 'default' }) => {
           Sevilla — 37.3886° N / 5.9823° W
         </span>
         <span className="label-xs text-[var(--color-muted)] tracking-[0.4em]">
-          C/ Sierpes — Centro Historico
+          Av. Ildefonso Marañón Lavín, 9 — 41019
         </span>
         <span className="label-xs text-[var(--color-muted)]">
           Est. MMXXIV
@@ -182,7 +182,7 @@ export const Header = ({ variant = 'default' }) => {
               ref={serifRef}
               className="block font-serif font-semibold text-[var(--color-ink)]"
               style={{
-                fontSize: 'clamp(2.4rem, 4.2vw, 4.4rem)',
+                fontSize: 'clamp(3.2rem, 5.6vw, 6rem)',
                 lineHeight: 0.8,
                 letterSpacing: '-0.04em',
               }}
@@ -190,11 +190,11 @@ export const Header = ({ variant = 'default' }) => {
               Stylo
             </span>
           </div>
-          <div ref={sansRef} className="flex flex-col pb-1 md:pb-2">
+          <div ref={sansRef} className="flex flex-col pb-1.5 md:pb-3">
             <span
               className="font-sans font-light text-[var(--color-muted)]"
               style={{
-                fontSize: '0.62rem',
+                fontSize: '0.78rem',
                 letterSpacing: '0.32em',
                 textTransform: 'uppercase',
               }}
@@ -204,7 +204,7 @@ export const Header = ({ variant = 'default' }) => {
             <span
               className="font-sans font-medium text-[var(--color-accent-ink)] tabular-nums"
               style={{
-                fontSize: '0.62rem',
+                fontSize: '0.78rem',
                 letterSpacing: '0.32em',
                 textTransform: 'uppercase',
               }}
@@ -294,7 +294,7 @@ export const Header = ({ variant = 'default' }) => {
               className="font-serif font-light text-[var(--color-ink)] group-hover:text-[var(--color-accent)] transition-colors"
               style={{ fontSize: '1.15rem', letterSpacing: '-0.01em' }}
             >
-              Bag
+              Cesta
             </span>
             <span
               className="label-xs text-[var(--color-muted)]"

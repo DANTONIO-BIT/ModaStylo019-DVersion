@@ -11,22 +11,25 @@ const TITLE_WORDS = ['Escribenos', 'o', 'visitanos.']
 
 // Business info — single source of truth for this page
 const SHOP = {
-  address: 'C/ Sierpes, Centro Historico',
-  city: 'Sevilla, Espana',
+  address: 'Av. Ildefonso Marañón Lavín, 9',
+  city: '41019 Sevilla, Espana',
   hours: [
     ['Lun – Sab', '10:00 – 20:30'],
     ['Domingo', 'Cerrado'],
   ],
   whatsapp: '34658509332',
   whatsappMessage: 'Hola, me gustaria hacer una consulta.',
-  instagram: '@modamariajose',
-  instagramUrl: 'https://instagram.com/modamariajose',
+  instagram: '@modastylo019',
+  instagramUrl: 'https://instagram.com/modastylo019',
+  tiktok: '@moda.stylo019',
+  tiktokUrl: 'https://www.tiktok.com/@moda.stylo019',
+  email: 'modastylo019@gmail.com',
   coords: { lat: 37.3886, lng: -5.9923 },
 }
 
 // Static Google Maps embed — no API key, no tracking beyond the iframe itself
 const MAP_EMBED_URL =
-  'https://maps.google.com/maps?q=Calle+Sierpes,+Sevilla,+Espana&t=&z=17&ie=UTF8&iwloc=&output=embed'
+  'https://maps.google.com/maps?q=Avenida+Ildefonso+Maranon+Lavin+9,+41019+Sevilla,+Espana&t=&z=17&ie=UTF8&iwloc=&output=embed'
 
 export const Contacto = () => {
   const rootRef = useRef(null)
@@ -37,6 +40,8 @@ export const Contacto = () => {
   const mapRef = useRef(null)
   const whatsappLineRef = useRef(null)
   const instagramLineRef = useRef(null)
+  const tiktokLineRef = useRef(null)
+  const emailLineRef = useRef(null)
 
   const [email, setEmail] = useState('')
   const [nombre, setNombre] = useState('')
@@ -167,6 +172,8 @@ export const Contacto = () => {
 
   const whatsappHover = makeHoverHandlers(whatsappLineRef)
   const instagramHover = makeHoverHandlers(instagramLineRef)
+  const tiktokHover = makeHoverHandlers(tiktokLineRef)
+  const emailHover = makeHoverHandlers(emailLineRef)
 
   return (
     <section
@@ -451,6 +458,56 @@ export const Contacto = () => {
                 style={{ transform: 'scaleX(0)', transformOrigin: 'left center' }}
               />
             </a>
+
+            <a
+              href={SHOP.tiktokUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              {...tiktokHover}
+              className="relative inline-flex items-baseline gap-3 self-start"
+            >
+              <span
+                className="font-serif font-light text-[var(--color-ink)]"
+                style={{ fontSize: '1.3rem' }}
+              >
+                TikTok
+              </span>
+              <span
+                className="font-sans text-[var(--color-muted)]"
+                style={{ fontSize: '0.8rem', letterSpacing: '0.05em' }}
+              >
+                {SHOP.tiktok}
+              </span>
+              <span
+                ref={tiktokLineRef}
+                className="absolute -bottom-1 left-0 right-0 h-px bg-[var(--color-ink)]"
+                style={{ transform: 'scaleX(0)', transformOrigin: 'left center' }}
+              />
+            </a>
+
+            <a
+              href={`mailto:${SHOP.email}`}
+              {...emailHover}
+              className="relative inline-flex items-baseline gap-3 self-start"
+            >
+              <span
+                className="font-serif font-light text-[var(--color-ink)]"
+                style={{ fontSize: '1.3rem' }}
+              >
+                Email
+              </span>
+              <span
+                className="font-sans text-[var(--color-muted)]"
+                style={{ fontSize: '0.8rem', letterSpacing: '0.05em' }}
+              >
+                {SHOP.email}
+              </span>
+              <span
+                ref={emailLineRef}
+                className="absolute -bottom-1 left-0 right-0 h-px bg-[var(--color-ink)]"
+                style={{ transform: 'scaleX(0)', transformOrigin: 'left center' }}
+              />
+            </a>
           </div>
         </aside>
       </div>
@@ -462,7 +519,7 @@ export const Contacto = () => {
             [ 03 ] / Donde estamos
           </span>
           <span className="label-xs text-[var(--color-muted)] hidden md:inline">
-            C/ Sierpes, Sevilla
+            Av. Ildefonso Marañón Lavín, 9 — Sevilla
           </span>
         </div>
 
@@ -475,7 +532,7 @@ export const Contacto = () => {
           }}
         >
           <iframe
-            title="Mapa — ModaMariaJose, Calle Sierpes, Sevilla"
+            title="Mapa — ModaStylo019, Av. Ildefonso Marañón Lavín, Sevilla"
             src={MAP_EMBED_URL}
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"

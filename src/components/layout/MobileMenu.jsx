@@ -7,9 +7,9 @@ import { useUIStore } from '@/store/useUIStore'
 gsap.registerPlugin(useGSAP)
 
 const NAV_ITEMS = [
-  { label: 'Index', to: '/', number: '01' },
-  { label: 'Atelier', to: '/catalogo', number: '02' },
-  { label: 'Contact', to: '/contacto', number: '03' },
+  { label: 'Inicio', to: '/', number: '01' },
+  { label: 'Catalogo', to: '/catalogo', number: '02' },
+  { label: 'Contacto', to: '/contacto', number: '03' },
 ]
 
 export const MobileMenu = () => {
@@ -192,10 +192,10 @@ export const MobileMenu = () => {
         {/* Bottom meta */}
         <div className="flex flex-col gap-2 pt-10 border-t border-[var(--color-surface)]">
           <span className="label-xs text-[var(--color-muted)]">
-            C/ Sierpes &mdash; Sevilla
+            Av. Ildefonso Marañón Lavín, 9 &mdash; 41019 Sevilla
           </span>
           <span className="label-xs text-[var(--color-muted)]">
-            658 509 332 &middot; @modamariajose
+            658 509 332 &middot; @modastylo019
           </span>
           <span className="label-xs text-[var(--color-accent-ink)] mt-2">
             Est. MMXXIV

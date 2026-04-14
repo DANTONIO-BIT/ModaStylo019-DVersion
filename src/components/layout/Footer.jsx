@@ -177,7 +177,7 @@ export const Footer = () => {
               }}
             >
               <textPath href="#circle-path">
-                Sevilla — Atelier — C/ Sierpes — Since 2024 —
+                Sevilla — Atelier — Av. Ildefonso Marañón Lavín — Since 2024 —
               </textPath>
             </text>
           </svg>
@@ -201,11 +201,11 @@ export const Footer = () => {
             className="font-serif font-light text-[var(--color-base)]"
             style={{ fontSize: 'clamp(1.5rem, 2.6vw, 2.4rem)', lineHeight: 1.1 }}
           >
-            C/ Sierpes,
+            Av. Ildefonso
             <br />
-            Centro Historico
+            Marañón Lavín, 9
             <br />
-            <span className="italic text-[var(--color-surface)]">Sevilla</span>
+            <span className="italic text-[var(--color-surface)]">41019 Sevilla</span>
           </p>
           <div className="flex flex-col gap-1">
             <span className="label-xs text-[var(--color-muted-soft)]">
@@ -224,9 +224,9 @@ export const Footer = () => {
           </span>
           <ul className="flex flex-col gap-2.5">
             {[
-              { label: 'Home', to: '/' },
-              { label: 'Atelier', to: '/catalogo' },
-              { label: 'Contact', to: '/contacto' },
+              { label: 'Inicio', to: '/' },
+              { label: 'Catalogo', to: '/catalogo' },
+              { label: 'Contacto', to: '/contacto' },
             ].map((l) => (
               <li key={l.to}>
                 <Link
@@ -260,7 +260,7 @@ export const Footer = () => {
             </li>
             <li>
               <a
-                href="https://instagram.com/modamariajose"
+                href="https://instagram.com/modastylo019"
                 target="_blank"
                 rel="noreferrer"
                 className="font-serif font-light text-[var(--color-base)] hover:text-[var(--color-accent)] transition-colors"
@@ -271,7 +271,18 @@ export const Footer = () => {
             </li>
             <li>
               <a
-                href="mailto:hola@modamariajose.es"
+                href="https://www.tiktok.com/@moda.stylo019"
+                target="_blank"
+                rel="noreferrer"
+                className="font-serif font-light text-[var(--color-base)] hover:text-[var(--color-accent)] transition-colors"
+                style={{ fontSize: '1.1rem' }}
+              >
+                TikTok
+              </a>
+            </li>
+            <li>
+              <a
+                href="mailto:modastylo019@gmail.com"
                 className="font-serif font-light text-[var(--color-base)] hover:text-[var(--color-accent)] transition-colors"
                 style={{ fontSize: '1.1rem' }}
               >

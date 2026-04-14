@@ -100,13 +100,13 @@ const Catalogo = () => {
           }}
           aria-hidden
         >
-          Atelier
+          Catalogo
         </span>
 
         {/* Foreground content */}
         <div className="relative z-10 flex flex-col gap-2 pb-4">
           <span className="label-xs text-[var(--color-accent-ink)]">
-            C/ Sierpes &mdash; Sevilla
+            Av. Ildefonso Marañón Lavín &mdash; Sevilla
           </span>
           <p
             className="font-sans font-light text-[var(--color-muted)] italic"

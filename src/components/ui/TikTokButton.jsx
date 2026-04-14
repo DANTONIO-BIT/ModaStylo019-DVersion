@@ -4,20 +4,19 @@ import gsap from 'gsap'
 
 gsap.registerPlugin(useGSAP)
 
-const WHATSAPP_URL = 'https://wa.me/34658509332'
+const TIKTOK_URL = 'https://www.tiktok.com/@moda.stylo019'
 
-export const WhatsAppButton = () => {
+export const TikTokButton = () => {
   const rootRef = useRef(null)
   const ringRef = useRef(null)
   const labelRef = useRef(null)
   const dotRef = useRef(null)
   const iconRef = useRef(null)
-  const [expanded, setExpanded] = useState(false)
+  const [, setExpanded] = useState(false)
 
-  // Entry + idle pulse + rotation
   useGSAP(
     () => {
-      const tl = gsap.timeline({ delay: 1.2 })
+      const tl = gsap.timeline({ delay: 1.5 })
 
       tl.from(rootRef.current, {
         scale: 0.4,
@@ -26,15 +25,13 @@ export const WhatsAppButton = () => {
         ease: 'expo.out',
       })
 
-      // Slow infinite rotation on the orbital ring text
       gsap.to(ringRef.current, {
         rotation: 360,
-        duration: 22,
+        duration: 26,
         ease: 'none',
         repeat: -1,
       })
 
-      // Soft idle breathing on the dot
       gsap.to(dotRef.current, {
         scale: 1.35,
         opacity: 0.55,
@@ -80,18 +77,17 @@ export const WhatsAppButton = () => {
   return (
     <a
       ref={rootRef}
-      href={WHATSAPP_URL}
+      href={TIKTOK_URL}
       target="_blank"
       rel="noreferrer"
-      aria-label="Contactar por WhatsApp"
+      aria-label="Ver en TikTok"
       data-cursor="link"
-      data-cursor-label="Escribe al atelier"
+      data-cursor-label="Videos del atelier"
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
-      className="fixed bottom-8 right-8 z-40 group flex items-center"
+      className="fixed bottom-56 right-8 z-40 group flex items-center"
       style={{ willChange: 'transform' }}
     >
-      {/* Expanding label — slides in from the right */}
       <div
         ref={labelRef}
         className="overflow-hidden whitespace-nowrap opacity-0 flex items-center"
@@ -103,21 +99,19 @@ export const WhatsAppButton = () => {
               className="label-xs text-[var(--color-muted)]"
               style={{ fontSize: '0.55rem' }}
             >
-              Directo con la casa
+              En movimiento
             </span>
             <span
               className="font-serif italic font-light text-[var(--color-ink)]"
               style={{ fontSize: '1.05rem' }}
             >
-              Escribenos
+              @moda.stylo019
             </span>
           </div>
         </div>
       </div>
 
-      {/* Button core */}
       <div className="relative w-16 h-16 flex items-center justify-center">
-        {/* Orbital SVG ring with rotating text */}
         <svg
           ref={ringRef}
           viewBox="0 0 100 100"
@@ -126,7 +120,7 @@ export const WhatsAppButton = () => {
         >
           <defs>
             <path
-              id="wa-ring-path"
+              id="tt-ring-path"
               d="M 50, 50 m -40, 0 a 40,40 0 1,1 80,0 a 40,40 0 1,1 -80,0"
             />
           </defs>
@@ -139,21 +133,18 @@ export const WhatsAppButton = () => {
               textTransform: 'uppercase',
             }}
           >
-            <textPath href="#wa-ring-path">
-              Atelier — WhatsApp — 658 509 332 —
+            <textPath href="#tt-ring-path">
+              Atelier — TikTok — @moda.stylo019 —
             </textPath>
           </text>
         </svg>
 
-        {/* Core circle — noir with paper halo for contrast on any bg */}
         <div className="relative w-12 h-12 rounded-full bg-[var(--color-ink)] flex items-center justify-center shadow-[0_10px_40px_-10px_rgba(10,10,10,0.5)] ring-2 ring-[var(--color-paper)]/70 group-hover:bg-[var(--color-accent)] group-hover:ring-[var(--color-accent)] transition-colors duration-500">
-          {/* Pulsing dot */}
           <span
             ref={dotRef}
             className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-[var(--color-accent)] group-hover:bg-[var(--color-base)]"
           />
 
-          {/* Icon — minimalist whatsapp glyph */}
           <svg
             ref={iconRef}
             width="18"
@@ -165,7 +156,7 @@ export const WhatsAppButton = () => {
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+            <path d="M21 8.5a5.5 5.5 0 0 1-5.5-5.5h-3v13.25a2.75 2.75 0 1 1-2.75-2.75c.28 0 .55.04.8.12v-3.04a5.75 5.75 0 1 0 4.95 5.67V9.4A8.5 8.5 0 0 0 21 11.4V8.5z" />
           </svg>
         </div>
       </div>

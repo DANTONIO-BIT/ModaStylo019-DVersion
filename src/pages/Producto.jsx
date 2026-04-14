@@ -156,7 +156,7 @@ const Producto = () => {
           className="font-serif font-light hover:underline underline-offset-4 transition-colors"
           style={{ fontSize: '1.1rem', color: 'var(--color-accent-ink)', letterSpacing: '-0.01em' }}
         >
-          ← Volver al Atelier
+          ← Volver al Catalogo
         </Link>
       </div>
     )

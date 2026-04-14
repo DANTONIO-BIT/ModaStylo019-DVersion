@@ -119,11 +119,6 @@ export const Hero = () => {
             /// Hero — NO.001
           </span>
         </div>
-        <div className="hidden md:block col-span-5 col-start-6 text-center">
-          <span className="label-xs text-[var(--color-accent-ink)]">
-            Spring / Summer — MMXXVI
-          </span>
-        </div>
         <div className="col-span-6 md:col-span-3 md:col-start-10 text-right">
           <span className="label-xs text-[var(--color-muted)]">
             37.3886 N // 5.9823 W
@@ -275,7 +270,7 @@ export const Hero = () => {
               }}
             >
               <textPath href="#hero-circle-path">
-                ModaMariaJose — C/ Sierpes — Since 2024 —
+                ModaMariaJose — Av. Ildefonso Marañón Lavín — Since 2024 —
               </textPath>
             </text>
           </svg>
