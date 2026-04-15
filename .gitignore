@@ -39,3 +39,8 @@ header-*.png
 # Vercel
 .vercel
 
+supabase/functions/
+supabase/.temp/
+node_modules/
+.DS_Store
+*.env

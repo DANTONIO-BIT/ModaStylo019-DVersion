@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useCartStore } from '@/store/useCartStore'
@@ -6,6 +6,7 @@ import { useUIStore } from '@/store/useUIStore'
 import { ItemCarrito } from '@/components/carrito/ItemCarrito'
 import { CarritoVacio } from '@/components/carrito/CarritoVacio'
 import { formatPrice } from '@/lib/precio'
+import { createCheckoutSession } from '@/services/checkout'
 
 gsap.registerPlugin(useGSAP)
 
@@ -22,6 +23,8 @@ export const CartDrawer = () => {
 
   const cartOpen = useUIStore((s) => s.cartOpen)
   const closeCart = useUIStore((s) => s.closeCart)
+
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
 
   const rootRef = useRef(null)
   const backdropRef = useRef(null)
@@ -101,6 +104,17 @@ export const CartDrawer = () => {
   const whatsappUrl = hasItems
     ? `https://wa.me/${WHATSAPP_NUMBER}?text=${buildWhatsAppMessage()}`
     : '#'
+
+  const handleStripeCheckout = async () => {
+    if (!hasItems || checkoutLoading) return
+    setCheckoutLoading(true)
+    try {
+      await createCheckoutSession(items)
+    } catch (err) {
+      alert(err.message || 'Error al procesar el pago')
+      setCheckoutLoading(false)
+    }
+  }
 
   return (
     <div
@@ -223,6 +237,21 @@ export const CartDrawer = () => {
             >
               Envío, disponibilidad final y ajustes se confirman directamente por WhatsApp.
             </p>
+
+            {/* Stripe Checkout CTA */}
+            <button
+              type="button"
+              onClick={handleStripeCheckout}
+              disabled={checkoutLoading}
+              className="w-full py-4 text-center font-sans text-sm uppercase transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 disabled:opacity-60"
+              style={{
+                background: 'var(--color-accent)',
+                color: 'var(--color-paper)',
+                letterSpacing: '0.12em',
+              }}
+            >
+              {checkoutLoading ? 'Procesando...' : 'Pagar con tarjeta'}
+            </button>
 
             {/* Checkout CTA */}
             <a
