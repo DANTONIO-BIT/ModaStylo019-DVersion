@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState, useMemo, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
@@ -9,6 +9,7 @@ import { GaleriaProducto } from '@/components/producto/GaleriaProducto'
 import { SelectorTalla } from '@/components/producto/SelectorTalla'
 import { ProductosRelacionados } from '@/components/producto/ProductosRelacionados'
 import { getPrecioBase, getPrecioEfectivo, formatPrice } from '@/lib/precio'
+import { normalizeColores, getColorMeta } from '@/lib/colores'
 
 gsap.registerPlugin(useGSAP)
 
@@ -74,7 +75,28 @@ const Producto = () => {
   const { producto, relacionados, loading, notFound, error } = useProducto(id)
 
   const [tallaSeleccionada, setTallaSeleccionada] = useState(null)
+  const [colorSeleccionado, setColorSeleccionado] = useState(null)
   const [addedFeedback, setAddedFeedback] = useState(false)
+
+  const coloresDisponibles = useMemo(
+    () => normalizeColores(producto?.colores),
+    [producto]
+  )
+
+  // Default-select the first color variant when product arrives
+  useEffect(() => {
+    if (coloresDisponibles.length > 0 && !colorSeleccionado) {
+      setColorSeleccionado(coloresDisponibles[0].id)
+    }
+  }, [coloresDisponibles, colorSeleccionado])
+
+  const imagenesGaleria = useMemo(() => {
+    if (colorSeleccionado) {
+      const entry = coloresDisponibles.find((c) => c.id === colorSeleccionado)
+      if (entry?.imagenes?.length) return entry.imagenes
+    }
+    return producto?.imagenes ?? []
+  }, [producto, coloresDisponibles, colorSeleccionado])
 
   const addItem = useCartStore((s) => s.addItem)
   const openCart = useUIStore((s) => s.openCart)
@@ -183,7 +205,11 @@ const Producto = () => {
       <div className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-12 lg:gap-16 mb-24 lg:mb-32">
 
         {/* LEFT — Gallery */}
-        <GaleriaProducto imagenes={producto.imagenes ?? []} nombre={producto.nombre} />
+        <GaleriaProducto
+          key={colorSeleccionado ?? 'base'}
+          imagenes={imagenesGaleria}
+          nombre={producto.nombre}
+        />
 
         {/* RIGHT — Info panel */}
         <div ref={infoPanelRef} className="flex flex-col gap-5 lg:pt-2">
@@ -291,6 +317,59 @@ const Producto = () => {
             data-animate
             style={{ borderColor: 'var(--color-surface)', borderTopWidth: '1px' }}
           />
+
+          {/* Color selector — only shown when the product has color variants */}
+          {coloresDisponibles.length > 0 && (
+            <div data-animate className="flex flex-col gap-3">
+              <div className="flex items-baseline gap-2">
+                <p className="label-xs" style={{ color: 'var(--color-muted)' }}>
+                  Color
+                </p>
+                {colorSeleccionado && (
+                  <span
+                    className="label-xs capitalize"
+                    style={{ color: 'var(--color-ink)' }}
+                  >
+                    · {getColorMeta(colorSeleccionado)?.label}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-wrap" style={{ gap: '0.6rem' }}>
+                {coloresDisponibles.map((c) => {
+                  const meta = getColorMeta(c.id)
+                  if (!meta) return null
+                  const active = colorSeleccionado === c.id
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => setColorSeleccionado(c.id)}
+                      title={meta.label}
+                      aria-label={meta.label}
+                      aria-pressed={active}
+                      className="transition-all"
+                      style={{
+                        width: '2.35rem',
+                        height: '2.35rem',
+                        borderRadius: '9999px',
+                        background: meta.hex,
+                        border: active
+                          ? '2px solid var(--color-ink)'
+                          : meta.border
+                            ? '1px solid rgba(0,0,0,0.2)'
+                            : '1px solid transparent',
+                        outline: active
+                          ? '2px solid var(--color-base)'
+                          : 'none',
+                        outlineOffset: active ? '-4px' : '0',
+                        cursor: 'pointer',
+                      }}
+                    />
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Size selector */}
           <div data-animate className="flex flex-col gap-3">

@@ -6,6 +6,7 @@ import {
   updateProducto,
 } from '@/services/productos'
 import { ImageUploader } from '@/components/admin/ImageUploader'
+import { COLORES_DISPONIBLES, getColorMeta } from '@/lib/colores'
 
 const CATEGORIAS = [
   'vestidos',
@@ -29,6 +30,8 @@ const emptyForm = () => ({
   precios_talla: {},
   usarPreciosTalla: false,
   imagenes: [],
+  usarColores: false,
+  colores: {}, // { blanco: { activo: true, imagenes: [...] }, ... }
   destacado: false,
   mas_vendido: false,
   activo: true,
@@ -67,6 +70,16 @@ const ProductoForm = () => {
       }
       const pt = data.precios_talla ?? {}
       const hasPT = Object.keys(pt).length > 0
+      const rawColores = Array.isArray(data.colores) ? data.colores : []
+      const coloresMap = {}
+      rawColores.forEach((c) => {
+        if (c && typeof c.id === 'string' && getColorMeta(c.id)) {
+          coloresMap[c.id] = {
+            activo: true,
+            imagenes: Array.isArray(c.imagenes) ? c.imagenes : [],
+          }
+        }
+      })
       setForm({
         nombre: data.nombre ?? '',
         descripcion: data.descripcion ?? '',
@@ -85,6 +98,8 @@ const ProductoForm = () => {
         ),
         usarPreciosTalla: hasPT,
         imagenes: Array.isArray(data.imagenes) ? data.imagenes : [],
+        usarColores: Object.keys(coloresMap).length > 0,
+        colores: coloresMap,
         destacado: !!data.destacado,
         mas_vendido: !!data.mas_vendido,
         activo: data.activo ?? true,
@@ -122,6 +137,32 @@ const ProductoForm = () => {
     }))
   }
 
+  const toggleColor = (colorId) => {
+    setForm((prev) => {
+      const current = prev.colores[colorId]
+      const next = { ...prev.colores }
+      if (current?.activo) {
+        next[colorId] = { ...current, activo: false }
+      } else {
+        next[colorId] = {
+          activo: true,
+          imagenes: current?.imagenes ?? [],
+        }
+      }
+      return { ...prev, colores: next }
+    })
+  }
+
+  const updateColorImagenes = (colorId, imagenes) => {
+    setForm((prev) => ({
+      ...prev,
+      colores: {
+        ...prev.colores,
+        [colorId]: { activo: true, imagenes },
+      },
+    }))
+  }
+
   const validate = () => {
     const errors = {}
     if (!form.nombre.trim()) errors.nombre = 'Requerido'
@@ -152,6 +193,19 @@ const ProductoForm = () => {
       if (entries.length > 0) preciosTalla = Object.fromEntries(entries)
     }
 
+    // Build colores: only include active entries with at least one image
+    let coloresPayload = null
+    if (form.usarColores) {
+      const clean = COLORES_DISPONIBLES
+        .filter((c) => form.colores[c.id]?.activo)
+        .map((c) => ({
+          id: c.id,
+          imagenes: (form.colores[c.id]?.imagenes ?? []).filter(Boolean),
+        }))
+        .filter((c) => c.imagenes.length > 0)
+      if (clean.length > 0) coloresPayload = clean
+    }
+
     const payload = {
       nombre: form.nombre.trim(),
       descripcion: form.descripcion.trim() || null,
@@ -161,6 +215,7 @@ const ProductoForm = () => {
       tallas: form.tallas,
       precios_talla: preciosTalla,
       imagenes: form.imagenes,
+      colores: coloresPayload,
       destacado: form.destacado,
       mas_vendido: form.mas_vendido,
       activo: form.activo,
@@ -419,6 +474,122 @@ const ProductoForm = () => {
                     />
                   </Field>
                 ))}
+              </div>
+            )}
+          </div>
+        </Section>
+
+        {/* Color variants (optional) */}
+        <Section
+          title="Variantes de color"
+          hint="Actívalo solo si este producto se ofrece en varios colores. Cada color necesita al menos una foto."
+        >
+          <div className="flex flex-col" style={{ gap: '1.25rem' }}>
+            <FlagRow
+              label="Usar variantes de color"
+              hint="La clienta verá únicamente los colores con fotos cargadas"
+              checked={form.usarColores}
+              onChange={(v) => updateField('usarColores', v)}
+            />
+
+            {form.usarColores && (
+              <div className="flex flex-col" style={{ gap: '1rem' }}>
+                <div
+                  className="flex flex-wrap"
+                  style={{ gap: '0.6rem' }}
+                >
+                  {COLORES_DISPONIBLES.map((c) => {
+                    const active = !!form.colores[c.id]?.activo
+                    return (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => toggleColor(c.id)}
+                        className="flex items-center font-sans transition-colors"
+                        style={{
+                          gap: '0.55rem',
+                          padding: '0.55rem 0.9rem',
+                          border: active
+                            ? '1px solid var(--color-ink)'
+                            : '1px solid var(--color-surface)',
+                          backgroundColor: active
+                            ? 'var(--color-ink)'
+                            : 'var(--color-base)',
+                          color: active
+                            ? 'var(--color-paper)'
+                            : 'var(--color-muted)',
+                          fontSize: '0.72rem',
+                          letterSpacing: '0.22em',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: '0.9rem',
+                            height: '0.9rem',
+                            borderRadius: '9999px',
+                            background: c.hex,
+                            border: c.border
+                              ? '1px solid rgba(0,0,0,0.2)'
+                              : 'none',
+                            display: 'inline-block',
+                          }}
+                        />
+                        {c.label}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {COLORES_DISPONIBLES.filter(
+                  (c) => form.colores[c.id]?.activo
+                ).map((c) => (
+                  <div
+                    key={c.id}
+                    className="bg-[var(--color-base)]"
+                    style={{
+                      border: '1px solid var(--color-surface)',
+                      padding: '1.25rem',
+                    }}
+                  >
+                    <div
+                      className="flex items-center"
+                      style={{ gap: '0.65rem', marginBottom: '1rem' }}
+                    >
+                      <span
+                        style={{
+                          width: '1.1rem',
+                          height: '1.1rem',
+                          borderRadius: '9999px',
+                          background: c.hex,
+                          border: c.border
+                            ? '1px solid rgba(0,0,0,0.2)'
+                            : 'none',
+                          display: 'inline-block',
+                        }}
+                      />
+                      <h3
+                        className="font-serif text-[var(--color-ink)]"
+                        style={{ fontSize: '1.05rem', fontWeight: 400 }}
+                      >
+                        {c.label}
+                      </h3>
+                    </div>
+                    <ImageUploader
+                      value={form.colores[c.id]?.imagenes ?? []}
+                      onChange={(next) => updateColorImagenes(c.id, next)}
+                    />
+                  </div>
+                ))}
+
+                {Object.values(form.colores).every((v) => !v?.activo) && (
+                  <p
+                    className="font-sans text-[var(--color-muted)]"
+                    style={{ fontSize: '0.78rem' }}
+                  >
+                    Selecciona al menos un color para subir sus fotos.
+                  </p>
+                )}
               </div>
             )}
           </div>
