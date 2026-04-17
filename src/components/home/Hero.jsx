@@ -9,7 +9,7 @@ import { fetchSetting } from '@/services/settings'
 gsap.registerPlugin(useGSAP)
 
 // Title words — stagger reveal on mount
-const TITLE_WORDS = ['Moda', 'para', 'ti.']
+const TITLE_WORDS = ['Moda', 'para', 'Ti.']
 
 export const Hero = () => {
   const [heroSrc, setHeroSrc] = useState(HERO_PLACEHOLDER)
@@ -141,7 +141,7 @@ export const Hero = () => {
             <img
               ref={imageRef}
               src={heroSrc}
-              alt="ModaMariaJose — Atelier Sevilla"
+              alt="ModaMariaJose — Stylo019 Sevilla"
               className="absolute inset-0 w-full h-full object-cover will-change-transform"
               style={{ transformOrigin: 'center center' }}
             />
@@ -167,7 +167,7 @@ export const Hero = () => {
             ref={labelRef}
             className="label-xs text-[var(--color-muted)]"
           >
-            [01] / Sevilla · Atelier
+            [01] / Stylo019 - Sevilla
           </span>
 
           {/* Title — word stagger */}
@@ -184,7 +184,7 @@ export const Hero = () => {
                 <span
                   ref={(el) => (wordsRef.current[i] = el)}
                   className={`block font-serif ${
-                    word === 'ti.'
+                    word === 'Ti.'
                       ? 'italic font-light text-[var(--color-accent-ink)]'
                       : 'font-light text-[var(--color-ink)]'
                   }`}
@@ -209,7 +209,7 @@ export const Hero = () => {
             }}
           >
             Moda exclusiva para mujer en el Centro Historico de Sevilla.
-            Cada pieza, elegida con cuidado. Para ti.
+            Cada pieza, elegida con cuidado. Para Ti.
           </p>
 
           {/* CTA with animated underline + magnetic hover */}
@@ -220,7 +220,7 @@ export const Hero = () => {
               onMouseEnter={handleCtaEnter}
               onMouseLeave={handleCtaLeave}
               data-cursor="link"
-              data-cursor-label="Atelier"
+              data-cursor-label="Stylo019"
               className="relative inline-flex items-baseline gap-3 group"
             >
               <span
@@ -270,7 +270,7 @@ export const Hero = () => {
               }}
             >
               <textPath href="#hero-circle-path">
-                ModaMariaJose — Av. Ildefonso Marañón Lavín — Since 2024 —
+                Stylo019 — Av. Ildefonso Marañón Lavín — Since 2024 —
               </textPath>
             </text>
           </svg>

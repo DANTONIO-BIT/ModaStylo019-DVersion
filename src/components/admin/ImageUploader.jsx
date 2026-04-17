@@ -248,7 +248,33 @@ const Thumbnail = ({
       </span>
     )}
 
-    {/* Hover overlay with controls */}
+    {/* Persistent remove button — always visible on all devices, bottom-right corner */}
+    <button
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation()
+        onRemove?.()
+      }}
+      disabled={disabled}
+      title="Eliminar imagen"
+      className="absolute bottom-2 right-2 font-sans text-[var(--color-paper)] disabled:opacity-30"
+      style={{
+        width: '1.75rem',
+        height: '1.75rem',
+        display: 'grid',
+        placeItems: 'center',
+        fontSize: '1rem',
+        lineHeight: 1,
+        backgroundColor: 'rgba(220, 38, 38, 0.92)',
+        backdropFilter: 'blur(4px)',
+        border: '1px solid rgba(255,255,255,0.2)',
+        zIndex: 2,
+      }}
+    >
+      ×
+    </button>
+
+    {/* Hover overlay — reorder arrows only, × is handled by the persistent button above */}
     <div
       className="absolute inset-0 flex items-end opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
       style={{
@@ -258,7 +284,7 @@ const Thumbnail = ({
       }}
     >
       <div
-        className="flex w-full items-center justify-between"
+        className="flex w-full items-center"
         style={{ gap: '0.35rem' }}
       >
         <ThumbButton
@@ -274,14 +300,6 @@ const Thumbnail = ({
           title="Mover a la derecha"
         >
           →
-        </ThumbButton>
-        <ThumbButton
-          onClick={onRemove}
-          disabled={disabled}
-          title="Eliminar imagen"
-          danger
-        >
-          ×
         </ThumbButton>
       </div>
     </div>

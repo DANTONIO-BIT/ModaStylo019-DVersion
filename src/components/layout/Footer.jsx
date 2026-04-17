@@ -177,7 +177,7 @@ export const Footer = () => {
               }}
             >
               <textPath href="#circle-path">
-                Sevilla — Atelier — Av. Ildefonso Marañón Lavín — Since 2024 —
+                Sevilla — Stylo019 — Av. Ildefonso Marañón Lavín — Since 2024 —
               </textPath>
             </text>
           </svg>

@@ -20,6 +20,11 @@ const CATEGORIAS = [
 
 const TALLAS = ['XS', 'S', 'M', 'L', 'XL']
 
+const EMPTY_CUSTOM_SLOTS = () => [
+  { id: 'custom-1', label: '', hex: '#ffffff', activo: false, imagenes: [] },
+  { id: 'custom-2', label: '', hex: '#ffffff', activo: false, imagenes: [] },
+]
+
 const emptyForm = () => ({
   nombre: '',
   descripcion: '',
@@ -31,7 +36,8 @@ const emptyForm = () => ({
   usarPreciosTalla: false,
   imagenes: [],
   usarColores: false,
-  colores: {}, // { blanco: { activo: true, imagenes: [...] }, ... }
+  colores: {},        // fixed: { blanco: { activo: true, imagenes: [...] }, ... }
+  coloresCustom: EMPTY_CUSTOM_SLOTS(), // 2 custom slots per product
   destacado: false,
   mas_vendido: false,
   activo: true,
@@ -72,14 +78,33 @@ const ProductoForm = () => {
       const hasPT = Object.keys(pt).length > 0
       const rawColores = Array.isArray(data.colores) ? data.colores : []
       const coloresMap = {}
+      const coloresCustom = EMPTY_CUSTOM_SLOTS()
+
       rawColores.forEach((c) => {
-        if (c && typeof c.id === 'string' && getColorMeta(c.id)) {
+        if (!c || typeof c.id !== 'string') return
+        if (getColorMeta(c.id)) {
+          // Fixed catalog color
           coloresMap[c.id] = {
+            activo: true,
+            imagenes: Array.isArray(c.imagenes) ? c.imagenes : [],
+          }
+        } else if (c.id === 'custom-1' || c.id === 'custom-2') {
+          // Custom color — restore label, hex and images to its slot
+          const idx = c.id === 'custom-1' ? 0 : 1
+          coloresCustom[idx] = {
+            id: c.id,
+            label: typeof c.label === 'string' ? c.label : '',
+            hex: typeof c.hex === 'string' ? c.hex : '#ffffff',
             activo: true,
             imagenes: Array.isArray(c.imagenes) ? c.imagenes : [],
           }
         }
       })
+
+      const hasColores =
+        Object.keys(coloresMap).length > 0 ||
+        coloresCustom.some((c) => c.activo)
+
       setForm({
         nombre: data.nombre ?? '',
         descripcion: data.descripcion ?? '',
@@ -98,8 +123,9 @@ const ProductoForm = () => {
         ),
         usarPreciosTalla: hasPT,
         imagenes: Array.isArray(data.imagenes) ? data.imagenes : [],
-        usarColores: Object.keys(coloresMap).length > 0,
+        usarColores: hasColores,
         colores: coloresMap,
+        coloresCustom,
         destacado: !!data.destacado,
         mas_vendido: !!data.mas_vendido,
         activo: data.activo ?? true,
@@ -163,6 +189,24 @@ const ProductoForm = () => {
     }))
   }
 
+  const updateCustomSlot = (idx, field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      coloresCustom: prev.coloresCustom.map((slot, i) =>
+        i === idx ? { ...slot, [field]: value } : slot
+      ),
+    }))
+  }
+
+  const updateCustomSlotImagenes = (idx, imagenes) => {
+    setForm((prev) => ({
+      ...prev,
+      coloresCustom: prev.coloresCustom.map((slot, i) =>
+        i === idx ? { ...slot, imagenes } : slot
+      ),
+    }))
+  }
+
   const validate = () => {
     const errors = {}
     if (!form.nombre.trim()) errors.nombre = 'Requerido'
@@ -193,17 +237,28 @@ const ProductoForm = () => {
       if (entries.length > 0) preciosTalla = Object.fromEntries(entries)
     }
 
-    // Build colores: only include active entries with at least one image
+    // Build colores: fixed + custom, only active entries with at least one image
     let coloresPayload = null
     if (form.usarColores) {
-      const clean = COLORES_DISPONIBLES
+      const fijos = COLORES_DISPONIBLES
         .filter((c) => form.colores[c.id]?.activo)
         .map((c) => ({
           id: c.id,
           imagenes: (form.colores[c.id]?.imagenes ?? []).filter(Boolean),
         }))
         .filter((c) => c.imagenes.length > 0)
-      if (clean.length > 0) coloresPayload = clean
+
+      const custom = form.coloresCustom
+        .filter((c) => c.activo && c.label.trim().length > 0 && c.imagenes.length > 0)
+        .map((c) => ({
+          id: c.id,
+          label: c.label.trim(),
+          hex: c.hex,
+          imagenes: c.imagenes.filter(Boolean),
+        }))
+
+      const all = [...fijos, ...custom]
+      if (all.length > 0) coloresPayload = all
     }
 
     const payload = {
@@ -582,7 +637,8 @@ const ProductoForm = () => {
                   </div>
                 ))}
 
-                {Object.values(form.colores).every((v) => !v?.activo) && (
+                {Object.values(form.colores).every((v) => !v?.activo) &&
+                  form.coloresCustom.every((c) => !c.activo) && (
                   <p
                     className="font-sans text-[var(--color-muted)]"
                     style={{ fontSize: '0.78rem' }}
@@ -590,6 +646,156 @@ const ProductoForm = () => {
                     Selecciona al menos un color para subir sus fotos.
                   </p>
                 )}
+
+                {/* Custom color slots */}
+                <div
+                  className="flex flex-col"
+                  style={{
+                    gap: '0.75rem',
+                    borderTop: '1px solid var(--color-surface)',
+                    paddingTop: '1.25rem',
+                    marginTop: '0.25rem',
+                  }}
+                >
+                  <p
+                    className="label-xs text-[var(--color-muted)]"
+                    style={{ letterSpacing: '0.22em' }}
+                  >
+                    Colores personalizados
+                  </p>
+
+                  {form.coloresCustom.map((slot, idx) => (
+                    <div key={slot.id} className="flex flex-col" style={{ gap: '0.75rem' }}>
+                      {/* Slot header: toggle + name + picker */}
+                      <div className="flex flex-wrap items-center" style={{ gap: '0.65rem' }}>
+                        {/* Active toggle */}
+                        <button
+                          type="button"
+                          onClick={() => updateCustomSlot(idx, 'activo', !slot.activo)}
+                          className="font-sans transition-colors"
+                          style={{
+                            fontSize: '0.65rem',
+                            letterSpacing: '0.2em',
+                            textTransform: 'uppercase',
+                            padding: '0.5rem 0.75rem',
+                            border: slot.activo
+                              ? '1px solid var(--color-accent)'
+                              : '1px solid var(--color-surface)',
+                            backgroundColor: slot.activo ? 'var(--color-accent)' : 'transparent',
+                            color: slot.activo ? 'var(--color-paper)' : 'var(--color-muted)',
+                            flexShrink: 0,
+                          }}
+                        >
+                          {slot.activo ? 'Activo' : 'Inactivo'}
+                        </button>
+
+                        {/* Color swatch + picker */}
+                        <div className="relative flex items-center" style={{ gap: '0.4rem' }}>
+                          <span
+                            style={{
+                              width: '1.4rem',
+                              height: '1.4rem',
+                              borderRadius: '9999px',
+                              background: slot.hex,
+                              border: '1px solid rgba(0,0,0,0.15)',
+                              display: 'inline-block',
+                              flexShrink: 0,
+                            }}
+                          />
+                          <input
+                            type="color"
+                            value={slot.hex}
+                            onChange={(e) => updateCustomSlot(idx, 'hex', e.target.value)}
+                            title="Elegir color"
+                            style={{
+                              width: '1.4rem',
+                              height: '1.4rem',
+                              border: 'none',
+                              padding: 0,
+                              background: 'none',
+                              cursor: 'pointer',
+                              opacity: 0,
+                              position: 'absolute',
+                              left: 0,
+                              top: 0,
+                            }}
+                          />
+                        </div>
+
+                        {/* Name input */}
+                        <input
+                          type="text"
+                          value={slot.label}
+                          onChange={(e) => updateCustomSlot(idx, 'label', e.target.value)}
+                          placeholder={`Ej: Verde agua, Rosa empolvado…`}
+                          className="bg-[var(--color-paper)] font-sans text-[var(--color-ink)] outline-none focus:border-[var(--color-accent)]"
+                          style={{
+                            border: '1px solid var(--color-surface)',
+                            padding: '0.55rem 0.85rem',
+                            fontSize: '0.85rem',
+                            flex: '1 1 12rem',
+                            minWidth: '10rem',
+                          }}
+                        />
+
+                        {/* Hex value — readonly display */}
+                        <span
+                          className="font-sans text-[var(--color-muted)]"
+                          style={{ fontSize: '0.72rem', letterSpacing: '0.08em' }}
+                        >
+                          {slot.hex.toUpperCase()}
+                        </span>
+                      </div>
+
+                      {/* Image uploader — only when slot is active and has a name */}
+                      {slot.activo && slot.label.trim().length > 0 && (
+                        <div
+                          className="bg-[var(--color-base)]"
+                          style={{
+                            border: '1px solid var(--color-surface)',
+                            padding: '1.25rem',
+                            marginLeft: '0.25rem',
+                          }}
+                        >
+                          <div
+                            className="flex items-center"
+                            style={{ gap: '0.65rem', marginBottom: '1rem' }}
+                          >
+                            <span
+                              style={{
+                                width: '1.1rem',
+                                height: '1.1rem',
+                                borderRadius: '9999px',
+                                background: slot.hex,
+                                border: '1px solid rgba(0,0,0,0.15)',
+                                display: 'inline-block',
+                              }}
+                            />
+                            <h3
+                              className="font-serif text-[var(--color-ink)]"
+                              style={{ fontSize: '1.05rem', fontWeight: 400 }}
+                            >
+                              {slot.label}
+                            </h3>
+                          </div>
+                          <ImageUploader
+                            value={slot.imagenes}
+                            onChange={(next) => updateCustomSlotImagenes(idx, next)}
+                          />
+                        </div>
+                      )}
+
+                      {slot.activo && slot.label.trim().length === 0 && (
+                        <p
+                          className="font-sans text-[var(--color-muted)]"
+                          style={{ fontSize: '0.75rem', marginLeft: '0.25rem' }}
+                        >
+                          Añade un nombre para activar la subida de fotos.
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>

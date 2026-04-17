@@ -9,7 +9,7 @@ import { GaleriaProducto } from '@/components/producto/GaleriaProducto'
 import { SelectorTalla } from '@/components/producto/SelectorTalla'
 import { ProductosRelacionados } from '@/components/producto/ProductosRelacionados'
 import { getPrecioBase, getPrecioEfectivo, formatPrice } from '@/lib/precio'
-import { normalizeColores, getColorMeta } from '@/lib/colores'
+import { normalizeColores } from '@/lib/colores'
 
 gsap.registerPlugin(useGSAP)
 
@@ -330,32 +330,32 @@ const Producto = () => {
                     className="label-xs capitalize"
                     style={{ color: 'var(--color-ink)' }}
                   >
-                    · {getColorMeta(colorSeleccionado)?.label}
+                    · {coloresDisponibles.find((c) => c.id === colorSeleccionado)?.label}
                   </span>
                 )}
               </div>
               <div className="flex flex-wrap" style={{ gap: '0.6rem' }}>
                 {coloresDisponibles.map((c) => {
-                  const meta = getColorMeta(c.id)
-                  if (!meta) return null
+                  // normalizeColores already resolves label/hex/border for both
+                  // fixed catalog colors and custom colors — no getColorMeta needed
                   const active = colorSeleccionado === c.id
                   return (
                     <button
                       key={c.id}
                       type="button"
                       onClick={() => setColorSeleccionado(c.id)}
-                      title={meta.label}
-                      aria-label={meta.label}
+                      title={c.label}
+                      aria-label={c.label}
                       aria-pressed={active}
                       className="transition-all"
                       style={{
                         width: '2.35rem',
                         height: '2.35rem',
                         borderRadius: '9999px',
-                        background: meta.hex,
+                        background: c.hex,
                         border: active
                           ? '2px solid var(--color-ink)'
-                          : meta.border
+                          : c.border
                             ? '1px solid rgba(0,0,0,0.2)'
                             : '1px solid transparent',
                         outline: active

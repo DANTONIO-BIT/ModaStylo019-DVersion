@@ -85,7 +85,7 @@ export const WhatsAppButton = () => {
       rel="noreferrer"
       aria-label="Contactar por WhatsApp"
       data-cursor="link"
-      data-cursor-label="Escribe al atelier"
+      data-cursor-label="Escribe a Stylo019"
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
       className="fixed bottom-8 right-8 z-40 group flex items-center"
@@ -140,7 +140,7 @@ export const WhatsAppButton = () => {
             }}
           >
             <textPath href="#wa-ring-path">
-              Atelier — WhatsApp — 658 509 332 —
+              Stylo019 — WhatsApp — 658 509 332 —
             </textPath>
           </text>
         </svg>

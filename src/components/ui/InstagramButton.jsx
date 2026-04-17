@@ -99,7 +99,7 @@ export const InstagramButton = () => {
               className="label-xs text-[var(--color-muted)]"
               style={{ fontSize: '0.55rem' }}
             >
-              Diario del atelier
+              Diario de Stylo019
             </span>
             <span
               className="font-serif italic font-light text-[var(--color-ink)]"
@@ -134,7 +134,7 @@ export const InstagramButton = () => {
             }}
           >
             <textPath href="#ig-ring-path">
-              Atelier — Instagram — @modastylo019 —
+              Stylo019 — Instagram — @modastylo019 —
             </textPath>
           </text>
         </svg>

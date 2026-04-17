@@ -82,7 +82,7 @@ export const TikTokButton = () => {
       rel="noreferrer"
       aria-label="Ver en TikTok"
       data-cursor="link"
-      data-cursor-label="Videos del atelier"
+      data-cursor-label="Videos de Stylo019"
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
       className="fixed bottom-56 right-8 z-40 group flex items-center"
@@ -134,7 +134,7 @@ export const TikTokButton = () => {
             }}
           >
             <textPath href="#tt-ring-path">
-              Atelier — TikTok — @moda.stylo019 —
+              Stylo019 — TikTok — @moda.stylo019 —
             </textPath>
           </text>
         </svg>

@@ -13,15 +13,36 @@ export const COLORES_DISPONIBLES = [
 export const getColorMeta = (id) =>
   COLORES_DISPONIBLES.find((c) => c.id === id) ?? null
 
-// Normalize raw DB value into a clean array of { id, imagenes } entries.
-// Drops entries with unknown ids or empty images.
+// Returns true for custom color entries (id: 'custom-1' | 'custom-2')
+const isCustomColor = (c) =>
+  c &&
+  typeof c.id === 'string' &&
+  c.id.startsWith('custom-') &&
+  typeof c.hex === 'string' &&
+  c.hex.startsWith('#') &&
+  typeof c.label === 'string' &&
+  c.label.trim().length > 0
+
+// Normalize raw DB value into a full display-ready array.
+// Accepts both fixed catalog colors and custom colors (id: custom-*).
+// Returns: { id, label, hex, border, imagenes } for all entries.
+// Drops entries with unknown ids, no images, or invalid custom data.
 export const normalizeColores = (raw) => {
   if (!Array.isArray(raw)) return []
   return raw
-    .filter((c) => c && typeof c.id === 'string' && getColorMeta(c.id))
-    .map((c) => ({
-      id: c.id,
-      imagenes: Array.isArray(c.imagenes) ? c.imagenes.filter(Boolean) : [],
-    }))
+    .filter((c) => {
+      if (!c || typeof c.id !== 'string') return false
+      return getColorMeta(c.id) !== null || isCustomColor(c)
+    })
+    .map((c) => {
+      const fixed = getColorMeta(c.id)
+      return {
+        id: c.id,
+        label: fixed?.label ?? c.label ?? c.id,
+        hex: fixed?.hex ?? c.hex ?? '#cccccc',
+        border: fixed?.border ?? c.border ?? false,
+        imagenes: Array.isArray(c.imagenes) ? c.imagenes.filter(Boolean) : [],
+      }
+    })
     .filter((c) => c.imagenes.length > 0)
 }

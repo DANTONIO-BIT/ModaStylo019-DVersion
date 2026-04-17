@@ -9,6 +9,8 @@ const Catalogo = lazy(() => import('@/pages/Catalogo'))
 const Producto = lazy(() => import('@/pages/Producto'))
 const Contacto = lazy(() => import('@/pages/Contacto'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
+const CheckoutSuccess = lazy(() => import('@/pages/CheckoutSuccess'))
+const CheckoutCancel = lazy(() => import('@/pages/CheckoutCancel'))
 
 // Admin bundle kept together — rarely visited, still off the critical path.
 const Login = lazy(() => import('@/pages/admin/Login'))
@@ -42,6 +44,8 @@ const App = () => (
           <Route path="/catalogo" element={<Catalogo />} />
           <Route path="/producto/:id" element={<Producto />} />
           <Route path="/contacto" element={<Contacto />} />
+          <Route path="/checkout/success" element={<CheckoutSuccess />} />
+          <Route path="/checkout/cancel" element={<CheckoutCancel />} />
         </Route>
 
         <Route path="/admin/login" element={<Login />} />

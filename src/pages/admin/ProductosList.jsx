@@ -282,154 +282,238 @@ const ProductosList = () => {
           {productos.map((p) => (
             <div
               key={p.id}
-              className="border-b border-[var(--color-surface)] last:border-b-0 md:grid md:items-center"
-              style={{
-                gridTemplateColumns:
-                  '5.5rem minmax(0, 2.4fr) 1fr 0.9fr 0.9fr 1.4fr 1.2fr',
-                padding: '1.25rem',
-                gap: '1rem',
-              }}
+              className="border-b border-[var(--color-surface)] last:border-b-0"
             >
-              {/* Thumbnail */}
+              {/* Mobile card layout */}
               <div
-                className="bg-[var(--color-surface)]"
-                style={{
-                  width: '4.5rem',
-                  height: '5.5rem',
-                  overflow: 'hidden',
-                  flexShrink: 0,
-                }}
+                className="flex gap-3 md:hidden"
+                style={{ padding: '1rem' }}
               >
-                <img
-                  src={p.imagenes?.[0]}
-                  alt={p.nombre}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
+                {/* Thumbnail */}
+                <div
+                  className="bg-[var(--color-surface)] shrink-0"
+                  style={{ width: '4rem', height: '5rem', overflow: 'hidden' }}
+                >
+                  <img
+                    src={p.imagenes?.[0]}
+                    alt={p.nombre}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+
+                {/* Content */}
+                <div className="flex flex-col justify-between flex-1" style={{ minWidth: 0 }}>
+                  {/* Top: name + price */}
+                  <div>
+                    <span
+                      className="font-serif text-[var(--color-ink)] block"
+                      style={{ fontSize: '1rem', fontWeight: 400, lineHeight: 1.2 }}
+                    >
+                      {p.nombre}
+                    </span>
+                    <div className="flex items-baseline gap-2 mt-1">
+                      {p.precio_oferta != null && p.precio_oferta < p.precio && (
+                        <span
+                          className="font-serif line-through"
+                          style={{ fontSize: '0.72rem', color: '#dc2626' }}
+                        >
+                          {formatPrecio(p.precio)}
+                        </span>
+                      )}
+                      <span
+                        className="font-serif text-[var(--color-ink)]"
+                        style={{ fontSize: '0.95rem', fontWeight: 400 }}
+                      >
+                        {formatPrecio(
+                          p.precio_oferta != null && p.precio_oferta < p.precio
+                            ? p.precio_oferta
+                            : p.precio
+                        )}
+                      </span>
+                      <span
+                        className="label-xs text-[var(--color-muted)] capitalize"
+                        style={{ letterSpacing: '0.1em' }}
+                      >
+                        · {p.categoria}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Bottom: toggles + actions */}
+                  <div className="flex items-center justify-between flex-wrap mt-2" style={{ gap: '0.4rem' }}>
+                    <div className="flex items-center" style={{ gap: '0.35rem' }}>
+                      <Toggle
+                        label="Nov"
+                        active={p.destacado}
+                        onClick={() => handleToggle(p, 'destacado')}
+                        title="Novedad"
+                      />
+                      <Toggle
+                        label="Top"
+                        active={p.mas_vendido}
+                        onClick={() => handleToggle(p, 'mas_vendido')}
+                        title="Más vendido"
+                      />
+                      <Toggle
+                        label="On"
+                        active={p.activo}
+                        onClick={() => handleToggle(p, 'activo')}
+                        title="Visible"
+                      />
+                    </div>
+                    <div className="flex items-center" style={{ gap: '0.35rem' }}>
+                      <Link
+                        to={`/admin/productos/${p.id}`}
+                        className="font-sans text-[var(--color-ink)]"
+                        style={{
+                          fontSize: '0.65rem',
+                          letterSpacing: '0.22em',
+                          textTransform: 'uppercase',
+                          padding: '0.5rem 0.75rem',
+                          border: '1px solid var(--color-surface)',
+                        }}
+                      >
+                        Editar
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmTarget(p)}
+                        className="font-sans text-red-600"
+                        style={{
+                          fontSize: '0.65rem',
+                          letterSpacing: '0.22em',
+                          textTransform: 'uppercase',
+                          padding: '0.5rem 0.75rem',
+                          border: '1px solid rgba(220, 38, 38, 0.3)',
+                        }}
+                      >
+                        Borrar
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              {/* Name + description */}
-              <div style={{ minWidth: 0 }}>
-                <span
-                  className="font-serif text-[var(--color-ink)] block"
-                  style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 400,
-                    lineHeight: 1.2,
-                  }}
-                >
-                  {p.nombre}
-                </span>
-                <span
-                  className="font-sans text-[var(--color-muted)] block overflow-hidden text-ellipsis whitespace-nowrap"
-                  style={{
-                    fontSize: '0.78rem',
-                    marginTop: '0.25rem',
-                  }}
-                >
-                  {p.descripcion}
-                </span>
-              </div>
-
-              {/* Category */}
-              <span
-                className="font-sans text-[var(--color-muted)]"
+              {/* Desktop row layout — unchanged */}
+              <div
+                className="hidden md:grid md:items-center"
                 style={{
-                  fontSize: '0.78rem',
-                  textTransform: 'capitalize',
-                  letterSpacing: '0.02em',
+                  gridTemplateColumns:
+                    '5.5rem minmax(0, 2.4fr) 1fr 0.9fr 0.9fr 1.4fr 1.2fr',
+                  padding: '1.25rem',
+                  gap: '1rem',
                 }}
               >
-                {p.categoria}
-              </span>
+                <div
+                  className="bg-[var(--color-surface)]"
+                  style={{ width: '4.5rem', height: '5.5rem', overflow: 'hidden', flexShrink: 0 }}
+                >
+                  <img
+                    src={p.imagenes?.[0]}
+                    alt={p.nombre}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
 
-              {/* Price */}
-              <div className="flex flex-col">
-                {p.precio_oferta != null && p.precio_oferta < p.precio && (
+                <div style={{ minWidth: 0 }}>
                   <span
-                    className="font-serif line-through"
-                    style={{ fontSize: '0.78rem', fontWeight: 400, color: '#dc2626' }}
+                    className="font-serif text-[var(--color-ink)] block"
+                    style={{ fontSize: '1.1rem', fontWeight: 400, lineHeight: 1.2 }}
                   >
-                    {formatPrecio(p.precio)}
+                    {p.nombre}
                   </span>
-                )}
+                  <span
+                    className="font-sans text-[var(--color-muted)] block overflow-hidden text-ellipsis whitespace-nowrap"
+                    style={{ fontSize: '0.78rem', marginTop: '0.25rem' }}
+                  >
+                    {p.descripcion}
+                  </span>
+                </div>
+
                 <span
-                  className="font-serif text-[var(--color-ink)]"
-                  style={{ fontSize: '1rem', fontWeight: 400 }}
+                  className="font-sans text-[var(--color-muted)]"
+                  style={{ fontSize: '0.78rem', textTransform: 'capitalize', letterSpacing: '0.02em' }}
                 >
-                  {formatPrecio(
-                    p.precio_oferta != null && p.precio_oferta < p.precio
-                      ? p.precio_oferta
-                      : p.precio
-                  )}
+                  {p.categoria}
                 </span>
-              </div>
 
-              {/* Stock total */}
-              <span
-                className="font-sans text-[var(--color-ink)]"
-                style={{ fontSize: '0.85rem' }}
-              >
-                {sumStock(p.tallas)}
-              </span>
+                <div className="flex flex-col">
+                  {p.precio_oferta != null && p.precio_oferta < p.precio && (
+                    <span
+                      className="font-serif line-through"
+                      style={{ fontSize: '0.78rem', fontWeight: 400, color: '#dc2626' }}
+                    >
+                      {formatPrecio(p.precio)}
+                    </span>
+                  )}
+                  <span
+                    className="font-serif text-[var(--color-ink)]"
+                    style={{ fontSize: '1rem', fontWeight: 400 }}
+                  >
+                    {formatPrecio(
+                      p.precio_oferta != null && p.precio_oferta < p.precio
+                        ? p.precio_oferta
+                        : p.precio
+                    )}
+                  </span>
+                </div>
 
-              {/* Toggles */}
-              <div
-                className="flex flex-wrap items-center"
-                style={{ gap: '0.5rem' }}
-              >
-                <Toggle
-                  label="Nov"
-                  active={p.destacado}
-                  onClick={() => handleToggle(p, 'destacado')}
-                  title="Marcar como novedad"
-                />
-                <Toggle
-                  label="Top"
-                  active={p.mas_vendido}
-                  onClick={() => handleToggle(p, 'mas_vendido')}
-                  title="Más vendido"
-                />
-                <Toggle
-                  label="On"
-                  active={p.activo}
-                  onClick={() => handleToggle(p, 'activo')}
-                  title="Visible en la tienda"
-                />
-              </div>
+                <span className="font-sans text-[var(--color-ink)]" style={{ fontSize: '0.85rem' }}>
+                  {sumStock(p.tallas)}
+                </span>
 
-              {/* Actions */}
-              <div
-                className="flex items-center justify-end"
-                style={{ gap: '0.5rem' }}
-              >
-                <Link
-                  to={`/admin/productos/${p.id}`}
-                  className="font-sans text-[var(--color-ink)] hover:text-[var(--color-accent)]"
-                  style={{
-                    fontSize: '0.7rem',
-                    letterSpacing: '0.22em',
-                    textTransform: 'uppercase',
-                    padding: '0.55rem 0.85rem',
-                    border: '1px solid var(--color-surface)',
-                  }}
-                >
-                  Editar
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => setConfirmTarget(p)}
-                  className="font-sans text-red-600 hover:text-red-700"
-                  style={{
-                    fontSize: '0.7rem',
-                    letterSpacing: '0.22em',
-                    textTransform: 'uppercase',
-                    padding: '0.55rem 0.85rem',
-                    border: '1px solid rgba(220, 38, 38, 0.3)',
-                  }}
-                >
-                  Borrar
-                </button>
+                <div className="flex flex-wrap items-center" style={{ gap: '0.5rem' }}>
+                  <Toggle
+                    label="Nov"
+                    active={p.destacado}
+                    onClick={() => handleToggle(p, 'destacado')}
+                    title="Marcar como novedad"
+                  />
+                  <Toggle
+                    label="Top"
+                    active={p.mas_vendido}
+                    onClick={() => handleToggle(p, 'mas_vendido')}
+                    title="Más vendido"
+                  />
+                  <Toggle
+                    label="On"
+                    active={p.activo}
+                    onClick={() => handleToggle(p, 'activo')}
+                    title="Visible en la tienda"
+                  />
+                </div>
+
+                <div className="flex items-center justify-end" style={{ gap: '0.5rem' }}>
+                  <Link
+                    to={`/admin/productos/${p.id}`}
+                    className="font-sans text-[var(--color-ink)] hover:text-[var(--color-accent)]"
+                    style={{
+                      fontSize: '0.7rem',
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      padding: '0.55rem 0.85rem',
+                      border: '1px solid var(--color-surface)',
+                    }}
+                  >
+                    Editar
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmTarget(p)}
+                    className="font-sans text-red-600 hover:text-red-700"
+                    style={{
+                      fontSize: '0.7rem',
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      padding: '0.55rem 0.85rem',
+                      border: '1px solid rgba(220, 38, 38, 0.3)',
+                    }}
+                  >
+                    Borrar
+                  </button>
+                </div>
               </div>
             </div>
           ))}

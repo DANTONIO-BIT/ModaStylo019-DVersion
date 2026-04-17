@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useCartStore } from '@/store/useCartStore'
@@ -6,6 +6,7 @@ import { useUIStore } from '@/store/useUIStore'
 import { ItemCarrito } from '@/components/carrito/ItemCarrito'
 import { CarritoVacio } from '@/components/carrito/CarritoVacio'
 import { formatPrice } from '@/lib/precio'
+import { createCheckoutSession } from '@/services/stripe'
 
 gsap.registerPlugin(useGSAP)
 
@@ -22,6 +23,9 @@ export const CartDrawer = () => {
 
   const cartOpen = useUIStore((s) => s.cartOpen)
   const closeCart = useUIStore((s) => s.closeCart)
+
+  const [paying, setPaying] = useState(false)
+  const [stripeError, setStripeError] = useState(null)
 
   const rootRef = useRef(null)
   const backdropRef = useRef(null)
@@ -92,6 +96,19 @@ export const CartDrawer = () => {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [cartOpen, closeCart])
+
+  const handleStripeCheckout = async () => {
+    if (paying || !hasItems) return
+    setStripeError(null)
+    setPaying(true)
+    try {
+      const url = await createCheckoutSession(items)
+      window.location.href = url
+    } catch (err) {
+      setStripeError('No se pudo iniciar el pago. Inténtalo de nuevo.')
+      setPaying(false)
+    }
+  }
 
   const itemsCount = totalItems()
   const subtotal = total()
@@ -221,10 +238,35 @@ export const CartDrawer = () => {
               className="label-xs leading-relaxed"
               style={{ color: 'var(--color-muted)', textTransform: 'none', letterSpacing: '0.02em', fontSize: '0.72rem' }}
             >
-              Envío, disponibilidad final y ajustes se confirman directamente por WhatsApp.
+              Envío y disponibilidad confirmados tras el pago o por WhatsApp.
             </p>
 
-            {/* Checkout CTA */}
+            {/* Primary CTA — Stripe */}
+            <button
+              type="button"
+              onClick={handleStripeCheckout}
+              disabled={paying}
+              className="w-full py-4 text-center font-sans text-sm uppercase transition-opacity duration-200 disabled:opacity-60"
+              style={{
+                background: 'var(--color-ink)',
+                color: 'var(--color-paper)',
+                letterSpacing: '0.12em',
+              }}
+            >
+              {paying ? 'Redirigiendo…' : 'Pagar con tarjeta →'}
+            </button>
+
+            {/* Stripe error */}
+            {stripeError && (
+              <p
+                className="label-xs text-center"
+                style={{ color: 'var(--color-accent)', textTransform: 'none', letterSpacing: '0.02em', fontSize: '0.72rem' }}
+              >
+                {stripeError}
+              </p>
+            )}
+
+            {/* Secondary CTA — WhatsApp */}
             <a
               href={whatsappUrl}
               target="_blank"

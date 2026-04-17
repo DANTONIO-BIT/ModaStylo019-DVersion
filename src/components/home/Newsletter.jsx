@@ -7,10 +7,10 @@ import { subscribeEmail } from '@/services/subscribers'
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 // Editorial phrase — split into words for stagger
-const PHRASE = ['Tu', 'estilo,', 'tu', 'talla,', 'tu.']
+const PHRASE = ['TÚ', 'estilo,', 'TÚ', 'talla,', 'TÚ.']
 
-// Words that represent the pronoun "tu/Tu" — painted in accent
-const ACCENT_WORDS = new Set(['Tu', 'tu', 'tu.'])
+// Words that represent the pronoun "TÚ" — painted in accent
+const ACCENT_WORDS = new Set(['TÚ', 'TÚ.'])
 
 // Basic email shape validation
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -180,10 +180,10 @@ export const Newsletter = () => {
       {/* Main grid */}
       <div className="grid grid-cols-12 gap-6 items-end">
         {/* Left — giant editorial phrase */}
-        <div className="col-span-12 md:col-span-7">
+        <div className="col-span-12 md:col-span-8">
           <h3
-            className="flex flex-wrap items-baseline gap-x-[0.25em] gap-y-1"
-            style={{ fontSize: 'clamp(2.4rem, 6.2vw, 6.2rem)' }}
+            className="flex flex-nowrap items-baseline gap-x-[0.25em]"
+            style={{ fontSize: 'clamp(2.2rem, 5vw, 5rem)' }}
           >
             {PHRASE.map((word, i) => (
               <span
@@ -195,7 +195,7 @@ export const Newsletter = () => {
                   ref={(el) => (wordsRef.current[i] = el)}
                   className="block font-serif font-light"
                   style={{
-                    fontSize: 'clamp(2.4rem, 6.2vw, 6.2rem)',
+                    fontSize: 'clamp(2.2rem, 5vw, 5rem)',
                     lineHeight: 0.88,
                     letterSpacing: '-0.03em',
                     color: ACCENT_WORDS.has(word)
